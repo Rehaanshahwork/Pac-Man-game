@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 
+
 public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
 
     //J Panel
@@ -31,6 +32,7 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
     private Image pacmanRight;
     private Image pacmanLeft;
     private Image powerFood;
+
 
 
     //We will use Hashsets to represent multiple objects, for better performance
@@ -69,6 +71,8 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
     public pacMan_Game() {
         setPreferredSize(new Dimension(borderWidth, borderHeight));
         setBackground(Color.black);
+        addKeyListener(this);
+        setFocusable(true);
 
         //Loading the images of the game
         wall = new ImageIcon(getClass().getResource("wall.png")).getImage();
@@ -90,6 +94,9 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
         gameLoop = new Timer(50, this);
         gameLoop.start();
 
+        //Key listener
+
+
     }
 
 
@@ -99,6 +106,43 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
         int width;
         int height;
         Image image;
+
+
+        //Movement of the Pacman and the Ghosts
+        int StartX = 0;
+        int StartY = 0;
+        char direction = 'u'; // u, d, l, r
+        int velocity_X = 0;
+        int velocity_Y = 0;
+
+        void updateDirection(char direction) {
+            this.direction = direction;
+            updateVelocity();
+        }
+
+        void updateVelocity() {
+            if (direction == 'u') {
+                this.velocity_X = 0;
+                this.velocity_Y = -tileSize/4;
+            }else if (direction == 'd') {
+                this.velocity_X = 0;
+                this.velocity_Y = +tileSize/4;
+            }else if (direction == 'l') {
+                this.velocity_X = -tileSize/4;
+                this.velocity_Y = 0;
+            }else if (direction == 'r') {
+                this.velocity_X = tileSize/4;
+                this.velocity_Y = 0;
+            }
+        }
+
+        //Move function, we are drawing the pacman moving
+        void move(){
+            pacman.x += pacman.velocity_X;
+            pacman.y += pacman.velocity_Y;
+        }
+
+
 
         //X and Y will keep chaning so we need to save the starting x and y
         int startX;
@@ -167,6 +211,9 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
 
     //Drawing
     public void drawImage(Graphics g){
+
+
+
         g.drawImage(pacman.image, pacman.x,  pacman.y, pacman.width, pacman.height, null);
 
         //Drawing the ghosts
@@ -183,6 +230,8 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
             g.fillRect(food.x, food.y, food.width, food.height);
             g.setColor(Color.white);
         }
+
+
     }
 
 
@@ -206,6 +255,18 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+        //System.out.println("Keyevent : " + e.getKeyCode());
+
+        // This checks the movement
+        if(e.getKeyCode() == KeyEvent.VK_UP){
+            pacman.updateDirection('u');
+        }else if(e.getKeyCode() == KeyEvent.VK_DOWN){
+            pacman.updateDirection('d');
+        }else if(e.getKeyCode() == KeyEvent.VK_LEFT){
+            pacman.updateDirection('l');
+        }else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+            pacman.updateDirection('r');
+        }
     }
 
 
