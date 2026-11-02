@@ -3,8 +3,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.HashSet;
-import java.util.Random;
-
 
 
 public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
@@ -136,12 +134,6 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
             }
         }
 
-        //Move function, we are drawing the pacman moving
-        void move(){
-            pacman.x += pacman.velocity_X;
-            pacman.y += pacman.velocity_Y;
-        }
-
 
 
         //X and Y will keep chaning so we need to save the starting x and y
@@ -234,10 +226,36 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
 
     }
 
+    //Move function, we are drawing the pacman moving
+    void move(){
+        pacman.x += pacman.velocity_X;
+        pacman.y += pacman.velocity_Y;
+
+        //Check for collision's while on the move
+        for(Block wall : walls){
+            if(collision(pacman, wall)){
+                pacman.x -= pacman.velocity_X; //Makes X zero
+                pacman.y -= pacman.velocity_Y; //Makes Y zero
+            }
+        }
+    }
+
+    //Collision function, we need to stop pacman from leaving the map
+    boolean collision(Block a, Block b){
+        // Collision formula
+        return a.x < b.x + b.width &&
+                a.x + a.width > b.x &&
+                a.y < b.y + b.height &&
+                a.y + a.height > b.y;
+    }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        move();
         repaint();
+
         //For this code to execute we need a game loop / timer
     }
 
@@ -255,7 +273,7 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
-        //System.out.println("Keyevent : " + e.getKeyCode());
+        //System.out.println("Key event : " + e.getKeyCode());
 
         // This checks the movement
         if(e.getKeyCode() == KeyEvent.VK_UP){
