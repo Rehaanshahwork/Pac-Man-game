@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.HashSet;
+import java.util.Random;
 
 
 public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
@@ -39,6 +40,12 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
     HashSet<Block> ghosts;
     Block pacman;
     Timer gameLoop;
+
+    //Ghost movement
+    //We give the ghosts four direction options
+    char Directions [] = {'u', 'd', 'l', 'r'};
+    //We select at random what movement they will do
+    Random rand = new Random();
 
     //Tile map for the game
     private String [] tileMap = {
@@ -87,6 +94,11 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
 
         //Testing loadMap and how many of each hash set I have
         loadMap();
+
+        for(Block ghost: ghosts){
+            char newDirections = Directions[rand.nextInt(4)];
+            ghost.updateDirection(newDirections);
+        }
 
         //Game loop
         gameLoop = new Timer(50, this);
@@ -236,7 +248,28 @@ public class pacMan_Game extends JPanel implements ActionListener,KeyListener {
             if(collision(pacman, wall)){
                 pacman.x -= pacman.velocity_X; //Makes X zero
                 pacman.y -= pacman.velocity_Y; //Makes Y zero
+                break;
             }
+        }
+
+        //Ghost movement
+        for(Block ghost : ghosts){
+            ghost.x += ghost.velocity_X;
+            ghost.y += ghost.velocity_Y;
+
+
+            //Collision check for ghosts
+            for(Block wall : walls){
+                if(collision(ghost, wall)){
+                    ghost.x -= ghost.velocity_X;
+                    ghost.y -= ghost.velocity_Y;
+                    char newDirection = Directions[rand.nextInt(4)];
+                    ghost.updateDirection(newDirection);
+
+                    break;
+                }
+            }
+
         }
     }
 
