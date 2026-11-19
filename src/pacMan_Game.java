@@ -35,8 +35,9 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
 
     // Game Loop & Utility
     Timer gameLoop;
+    char[] directions = {'u', 'd', 'l', 'r'}; // Up, Down, Left, Right
     Random rand = new Random();
-    char[] directions = {'u', 'd', 'l', 'r'}; // Standardized naming
+
 
     // The Map (21 rows, 19 columns)
     private String[] tileMap = {
@@ -215,20 +216,17 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Core logic for moving entities and checking collisions
     void move() {
-        // Pac-Man movement
+        // --- PAC-MAN MOVEMENT ---
         pacman.x += pacman.velocity_X;
         pacman.y += pacman.velocity_Y;
 
-        //Pacman teleportation
+        // Pac-Man teleportation
         if (pacman.x > borderWidth) {
             pacman.x = 0;
-        }else if(pacman.x + pacman.width < 0) {
+        } else if (pacman.x + pacman.width < 0) {
             pacman.x = borderWidth;
         }
-
-
 
         // Pac-Man Collision Check
         for (Block wall : walls) {
@@ -240,41 +238,39 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-
-
-        // Ghost Movement
+        // --- GHOST MOVEMENT ---
         for (Block ghost : ghosts) {
+
+            // 1. Force UP if on the tunnel row (Row 9)
+            if (ghost.y == tileSize * 9 && (ghost.direction == 'l' || ghost.direction == 'r')) {
+                ghost.updateDirection('u');
+            }
+
+            // 2. Move the ghost
             ghost.x += ghost.velocity_X;
             ghost.y += ghost.velocity_Y;
 
-
-            //Ghost teleportation
-            if(ghost.x > borderWidth) {
+            // 3. Ghost teleportation
+            if (ghost.x > borderWidth) {
                 ghost.x = 0;
-            }else if(ghost.x + ghost.width < 0) {
+            } else if (ghost.x + ghost.width < 0) {
                 ghost.x = borderWidth;
             }
 
-
-
-            // Ghost Collision Check
+            // 4. Ghost Collision Check
             for (Block wall : walls) {
                 if (collision(ghost, wall)) {
-                    // Undo movement
+                    // Undo movement so they don't phase into the block
                     ghost.x -= ghost.velocity_X;
                     ghost.y -= ghost.velocity_Y;
 
                     // Pick a new random direction
                     char newDirection = directions[rand.nextInt(4)];
                     ghost.updateDirection(newDirection);
-                    break;
+
+                    break; // Stop checking walls for this ghost
                 }
             }
-
-
-
-
-
         }
     }
 
@@ -287,7 +283,7 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
     }
 
     // =====================================================================
-    // 8. INPUT HANDLING
+    //INPUT HANDLING
     // =====================================================================
     @Override
     public void keyTyped(KeyEvent e) {}
