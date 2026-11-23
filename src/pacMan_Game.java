@@ -181,6 +181,9 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+
+
+
     // =====================================================================
     // 7. GAMEPLAY & RENDERING
     // =====================================================================
@@ -215,6 +218,8 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
             g.fillRect(food.x, food.y, food.width, food.height);
         }
     }
+
+
 
     void move() {
         // --- PAC-MAN MOVEMENT ---
@@ -268,7 +273,6 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
                     char newDirection = directions[rand.nextInt(4)];
                     ghost.updateDirection(newDirection);
 
-                    break; // Stop checking walls for this ghost
                 }
             }
         }
@@ -302,5 +306,17 @@ public class pacMan_Game extends JPanel implements ActionListener, KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             pacman.updateDirection('r');
         }
+
+        //When pack man changes direction, the image should change accordingly
+        if(pacman.direction == 'u') {
+            pacman.image = pacmanUp;
+        }else if(pacman.direction == 'd') {
+            pacman.image = pacmanDown;
+        }else if(pacman.direction == 'l') {
+            pacman.image = pacmanLeft;
+        }else if(pacman.direction == 'r') {
+            pacman.image = pacmanRight;
+        }
+
     }
 }
